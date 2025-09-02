@@ -23,18 +23,43 @@ const limiter = rateLimit({
 app.use(helmet());
 app.use(limiter);
 
-// CORS configuration - Temporarily permissive for deployment testing
+// CORS configuration - Environment-specific
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:3001',
+  'https://help-yourself.netlify.app',
+  'https://help-yourself-admin.netlify.app'
+];
+
 const corsOptions = {
-  origin: true, // Allow all origins temporarily
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.log('CORS blocked origin:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+  allowedHeaders: [
+    "Content-Type", 
+    "Authorization", 
+    "Content-Length", 
+    "X-Requested-With",
+    "Accept",
+    "X-CSRF-Token"
+  ],
   optionsSuccessStatus: 200,
 };
 
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 app.options("*", cors(corsOptions));
 
 // MongoDB connection with timeout
@@ -77,6 +102,17 @@ app.get("/api/health", (req, res) => {
     environment: process.env.NODE_ENV || "development",
     database: usingMockDatabase ? "mock" : "mongodb",
     version: "1.0.0"
+  });
+});
+
+// CORS test endpoint
+app.get("/api/cors-test", (req, res) => {
+  res.status(200).json({
+    message: "CORS test successful",
+    origin: req.headers.origin,
+    method: req.method,
+    headers: req.headers,
+    timestamp: new Date().toISOString()
   });
 });
 
