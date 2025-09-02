@@ -83,6 +83,18 @@ app.use((req, res, next) => {
   next();
 });
 
+// Health check endpoint for Render.com
+app.get("/api/health", (req, res) => {
+  res.status(200).json({
+    status: "healthy",
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || "development",
+    database: usingMockDatabase ? "mock" : "mongodb",
+    version: "1.0.0"
+  });
+});
+
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/jobs", jobRoutes);
