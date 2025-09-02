@@ -174,29 +174,29 @@
   }
 
   /* Show/hide based on screen size */
-  .desktop-only {
-    display: none;
+  .mobile-only {
+    display: block; /* Show static grid on mobile */
   }
   .mobile-tablet-only {
     display: block;
   }
 
   .features-carousel-container {
-    display: block;
+    display: none; /* Hide carousel on mobile */
   }
 }
 
 /* Desktop and larger tablets */
 @media (min-width: 769px) {
-  .desktop-only {
-    display: none; /* Hide grid, show carousel everywhere */
+  .mobile-only {
+    display: none; /* Hide static grid on desktop */
   }
   .mobile-tablet-only {
     display: none;
   }
 
   .features-carousel-container {
-    display: block;
+    display: block; /* Show carousel on desktop */
   }
 }
 

@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { setPageTitle } from "../../api/slices/uiSlice";
 import apiService from "../../services/api";
 import "./AdminApprovals.css";
 
 const AdminApprovals = () => {
+  const dispatch = useDispatch();
   const [pendingRequests, setPendingRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [processingId, setProcessingId] = useState(null);
 
   useEffect(() => {
+    dispatch(setPageTitle("Admin Approvals - Help Yourself"));
     fetchPendingRequests();
-  }, []);
+  }, [dispatch]);
 
   const fetchPendingRequests = async () => {
     try {

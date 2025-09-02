@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
+import { setPageTitle } from "../../api/slices/uiSlice";
 import apiService from "../../services/api";
 import AdminProfile from "../../components/AdminProfile/AdminProfile";
 import JobSeekerProfile from "../../components/JobSeekerProfile/JobSeekerProfile";
@@ -13,6 +15,11 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setPageTitle("My Profile - Help Yourself"));
+  }, [dispatch]);
 
   useEffect(() => {
     const fetchProfile = async () => {

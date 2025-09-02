@@ -1,16 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
+import { setPageTitle } from "../../api/slices/uiSlice";
 import Form from "../../components/Form";
 import apiService from "../../services/api";
+import { User, Building2, Check } from "lucide-react";
 import "./Login.css";
 
 const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [selectedRole, setSelectedRole] = useState("job-seeker");
   const [fieldErrors, setFieldErrors] = useState({});
+
+  // Set page title
+  useEffect(() => {
+    dispatch(setPageTitle("Login - Help Yourself"));
+  }, [dispatch]);
 
   // Handle signup success notification
   useEffect(() => {
@@ -207,28 +216,28 @@ const Login = () => {
             <div className="details-content">
               {selectedRole === "job-seeker" ? (
                 <div className="role-details">
-                  <div className="role-icon">👤</div>
+                  <div className="role-icon"><User size={32} /></div>
                   <h2>Job Seeker</h2>
                   <p>Find your dream job and advance your career</p>
                   <ul className="role-features">
-                    <li>✓ Browse thousands of job listings</li>
-                    <li>✓ Apply to jobs with one click</li>
-                    <li>✓ Track your application status</li>
-                    <li>✓ Get job recommendations</li>
-                    <li>✓ Build your professional profile</li>
+                    <li><Check size={16} style={{display: 'inline', marginRight: '8px'}} /> Browse thousands of job listings</li>
+                    <li><Check size={16} style={{display: 'inline', marginRight: '8px'}} /> Apply to jobs with one click</li>
+                    <li><Check size={16} style={{display: 'inline', marginRight: '8px'}} /> Track your application status</li>
+                    <li><Check size={16} style={{display: 'inline', marginRight: '8px'}} /> Get job recommendations</li>
+                    <li><Check size={16} style={{display: 'inline', marginRight: '8px'}} /> Build your professional profile</li>
                   </ul>
                 </div>
               ) : (
                 <div className="role-details">
-                  <div className="role-icon">🏢</div>
+                  <div className="role-icon"><Building2 size={32} /></div>
                   <h2>Job Poster</h2>
                   <p>Find the perfect candidates for your company</p>
                   <ul className="role-features">
-                    <li>✓ Post unlimited job listings</li>
-                    <li>✓ Manage applicant screening</li>
-                    <li>✓ Access candidate profiles</li>
-                    <li>✓ Analytics and insights</li>
-                    <li>✓ Team collaboration tools</li>
+                    <li><Check size={16} style={{display: 'inline', marginRight: '8px'}} /> Post unlimited job listings</li>
+                    <li><Check size={16} style={{display: 'inline', marginRight: '8px'}} /> Manage applicant screening</li>
+                    <li><Check size={16} style={{display: 'inline', marginRight: '8px'}} /> Access candidate profiles</li>
+                    <li><Check size={16} style={{display: 'inline', marginRight: '8px'}} /> Analytics and insights</li>
+                    <li><Check size={16} style={{display: 'inline', marginRight: '8px'}} /> Team collaboration tools</li>
                   </ul>
                 </div>
               )}

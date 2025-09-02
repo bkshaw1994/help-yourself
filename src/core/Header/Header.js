@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { UserCircle, LogOut, PlusCircle, Settings, LogIn, UserPlus } from "lucide-react";
 import apiService from "../../services/api";
 import "./Header.css";
 
@@ -57,37 +58,22 @@ const Header = () => {
       <div className="header-container">
         <div className="logo">
           <Link to="/" className="logo-link">
-            <h1>Your App</h1>
+            <h1>Help Yourself</h1>
           </Link>
         </div>
         <nav className="navigation">
-          <ul className="nav-list">
-            <li className="nav-item">
-              <Link to="/" className="nav-link">
-                Home
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/jobs" className="nav-link">
-                Jobs
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/about" className="nav-link">
-                About
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/services" className="nav-link">
-                Services
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/contact" className="nav-link">
-                Contact
-              </Link>
-            </li>
-          </ul>
+          <Link to="/" className="nav-link">
+            Home
+          </Link>
+          <Link to="/jobs" className="nav-link">
+            Jobs
+          </Link>
+          <Link to="/about" className="nav-link">
+            About
+          </Link>
+          <Link to="/contact" className="nav-link">
+            Contact
+          </Link>
         </nav>
         <div className="header-actions">
           {isAuthenticated ? (
@@ -98,35 +84,41 @@ const Header = () => {
               {userData?.role === "admin" && (
                 <>
                   <button
-                    className="btn-create-job"
+                    className="btn-signup"
                     onClick={() => navigate("/create-job")}
                   >
+                    <PlusCircle size={16} className="mr-2" />
                     Create Job
                   </button>
                   <button
-                    className="btn-admin"
+                    className="btn-profile"
                     onClick={() => navigate("/admin")}
                   >
+                    <Settings size={16} className="mr-2" />
                     Admin
                   </button>
                 </>
               )}
               <button className="btn-profile" onClick={handleProfileClick}>
+                <UserCircle size={16} className="mr-2" />
                 Profile
               </button>
               <button className="btn-logout" onClick={handleLogout}>
+                <LogOut size={16} className="mr-2" />
                 Logout
               </button>
             </div>
           ) : (
-            <>
+            <div className="auth-buttons">
               <button className="btn-login" onClick={handleLoginClick}>
+                <LogIn size={16} className="mr-2" />
                 Login
               </button>
               <button className="btn-signup" onClick={handleSignupClick}>
+                <UserPlus size={16} className="mr-2" />
                 Sign Up
               </button>
-            </>
+            </div>
           )}
         </div>
       </div>

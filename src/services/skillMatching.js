@@ -142,28 +142,28 @@ export class SkillMatchingService {
         color: "#10b981", // green
         description:
           "Outstanding skill match! You have almost all required skills.",
-        icon: "🎯",
+        icon: "target",
       };
     } else if (percentage >= 75) {
       return {
         level: "Good",
         color: "#059669", // dark green
         description: "Strong skill match! You meet most requirements.",
-        icon: "✅",
+        icon: "check-circle",
       };
     } else if (percentage >= 50) {
       return {
         level: "Moderate",
         color: "#f59e0b", // yellow
         description: "Decent skill match. Consider developing missing skills.",
-        icon: "⚡",
+        icon: "zap",
       };
     } else if (percentage >= 25) {
       return {
         level: "Fair",
         color: "#f97316", // orange
         description: "Some skills match. Significant skill development needed.",
-        icon: "📈",
+        icon: "trending-up",
       };
     } else {
       return {
@@ -171,7 +171,7 @@ export class SkillMatchingService {
         color: "#ef4444", // red
         description:
           "Limited skill match. Consider skill development or alternative roles.",
-        icon: "📚",
+        icon: "book-open",
       };
     }
   }

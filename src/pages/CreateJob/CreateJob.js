@@ -1,13 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
+import { setPageTitle } from "../../api/slices/uiSlice";
+import { AlertTriangle, ChevronLeft } from "lucide-react";
 import "./CreateJob.css";
 
 const CreateJob = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  // Set page title
+  useEffect(() => {
+    dispatch(setPageTitle("Create Job Listing - Help Yourself"));
+  }, [dispatch]);
 
   // Check if user is admin
   useEffect(() => {
@@ -26,7 +35,7 @@ const CreateJob = () => {
     workMode: "On-site",
     salaryMin: "",
     salaryMax: "",
-    currency: "USD",
+    currency: "INR",
     experienceLevel: "Entry Level",
     department: "",
     description: "",
@@ -456,7 +465,7 @@ const CreateJob = () => {
       workMode: "On-site",
       salaryMin: "",
       salaryMax: "",
-      currency: "USD",
+      currency: "INR",
       experienceLevel: "Entry Level",
       department: "",
       description: "",
@@ -504,14 +513,14 @@ const CreateJob = () => {
           onClick={() => navigate("/admin")}
           className="back-btn"
         >
-          ← Back to Admin Dashboard
+          <ChevronLeft size={16} style={{marginRight: '8px'}} /> Back to Admin Dashboard
         </button>
       </div>
 
       {error && (
         <div className="error-message">
           <div className="error-header">
-            <strong>⚠️ Validation Failed</strong>
+                        <strong><AlertTriangle size={16} style={{display: 'inline', marginRight: '8px'}} /> Validation Failed</strong>
           </div>
           <div className="error-content">
             {error.includes("Validation Failed:") ? (
@@ -581,13 +590,13 @@ const CreateJob = () => {
 
             <div className="form-group">
               <label htmlFor="location">Location *</label>
-              <input
+                            <input
                 type="text"
                 id="location"
                 name="location"
                 value={jobData.location}
                 onChange={handleInputChange}
-                placeholder="e.g., New York, NY or Remote"
+                placeholder="e.g., Mumbai, Maharashtra or Bangalore, Karnataka or Remote"
                 required
               />
             </div>
@@ -747,13 +756,10 @@ const CreateJob = () => {
                 value={jobData.currency}
                 onChange={handleInputChange}
               >
+                <option value="INR">INR (₹)</option>
                 <option value="USD">USD ($)</option>
                 <option value="EUR">EUR (€)</option>
                 <option value="GBP">GBP (£)</option>
-                <option value="CAD">CAD (C$)</option>
-                <option value="AUD">AUD (A$)</option>
-                <option value="INR">INR (₹)</option>
-                <option value="JPY">JPY (¥)</option>
               </select>
             </div>
           </div>

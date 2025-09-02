@@ -49,7 +49,7 @@ const jobSchema = new mongoose.Schema(
       },
       currency: {
         type: String,
-        default: "USD",
+        default: "INR",
         maxlength: [3, "Currency code cannot be more than 3 characters"],
       },
     },

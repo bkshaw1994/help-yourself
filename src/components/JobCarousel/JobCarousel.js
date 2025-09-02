@@ -1,4 +1,5 @@
 import React from "react";
+import { Edit, Trash2 } from "lucide-react";
 import Carousel from "../Carousel/Carousel";
 import "./JobCarousel.css";
 
@@ -96,6 +97,7 @@ const JobCarousel = ({
                       onEditJob(job);
                     }}
                   >
+                    <Edit size={14} style={{marginRight: '4px'}} />
                     Edit
                   </button>
                 )}
@@ -107,6 +109,7 @@ const JobCarousel = ({
                       onDeleteJob(job._id);
                     }}
                   >
+                    <Trash2 size={14} style={{marginRight: '4px'}} />
                     Delete
                   </button>
                 )}

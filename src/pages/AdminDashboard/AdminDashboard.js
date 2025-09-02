@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setPageTitle } from "../../api/slices/uiSlice";
 import apiService from "../../services/api";
 import Form from "../../components/Form";
 import { PageLoader } from "../../components/Loader";
+import { X, Edit, Trash2, CheckCircle } from "lucide-react";
 import "./AdminDashboard.css";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState("jobs");
   const [jobs, setJobs] = useState([]);
   const [users, setUsers] = useState([]);
@@ -17,6 +21,11 @@ const AdminDashboard = () => {
   const [showJobForm, setShowJobForm] = useState(false);
   const [editingJob, setEditingJob] = useState(null);
   const [user, setUser] = useState(null);
+
+  // Set page title
+  useEffect(() => {
+    dispatch(setPageTitle("Admin Dashboard - Help Yourself"));
+  }, [dispatch]);
 
   // Check if we're on the post-job route
   React.useEffect(() => {
@@ -473,7 +482,7 @@ const AdminDashboard = () => {
                   <div className="form-header">
                     <h3>{editingJob ? "Edit Job" : "Create New Job"}</h3>
                     <button className="close-button" onClick={handleCancelForm}>
-                      ×
+                      <X size={16} />
                     </button>
                   </div>
 
@@ -534,6 +543,7 @@ const AdminDashboard = () => {
                         onClick={() => handleEditJob(job)}
                         disabled={isLoading}
                       >
+                        <Edit size={16} style={{marginRight: '6px'}} />
                         Edit
                       </button>
                       <button
@@ -541,6 +551,7 @@ const AdminDashboard = () => {
                         onClick={() => handleDeleteJob(job._id)}
                         disabled={isLoading}
                       >
+                        <Trash2 size={16} style={{marginRight: '6px'}} />
                         Delete
                       </button>
                     </div>
@@ -590,6 +601,7 @@ const AdminDashboard = () => {
                           }
                           disabled={isLoading}
                         >
+                          <CheckCircle size={16} style={{marginRight: '6px'}} />
                           Approve
                         </button>
                         <button
@@ -665,6 +677,7 @@ const AdminDashboard = () => {
                               }
                               disabled={isLoading}
                             >
+                              <CheckCircle size={16} style={{marginRight: '6px'}} />
                               Promote to Admin
                             </button>
                           )}

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
-import { Search } from "lucide-react";
+import { Search, Eye, FileText, Plus, ChevronLeft, ChevronRight, Filter, RotateCcw } from "lucide-react";
+import { setPageTitle } from "../../api/slices/uiSlice";
 import apiService from "../../services/api";
 import { SectionLoader } from "../../components/Loader";
 import SkillMatchScore from "../../components/SkillMatchScore/SkillMatchScore";
@@ -9,14 +11,24 @@ import "./Jobs.css";
 
 const Jobs = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [jobs, setJobs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
-  const [pagination, setPagination] = useState({});
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pages: 1,
+    total: 0
+  });
   const [user, setUser] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
+
+  // Set page title
+  useEffect(() => {
+    dispatch(setPageTitle("Browse Jobs - Help Yourself"));
+  }, [dispatch]);
 
   // Check if user is admin and fetch profile data
   useEffect(() => {
@@ -148,14 +160,16 @@ const Jobs = () => {
       return "Salary not specified";
     }
 
-    const currency = salary.currency || "USD";
+    const currency = salary.currency || "INR";
+    const symbol = currency === "INR" ? "₹" : currency === "USD" ? "$" : currency;
+    
     if (salary.min && salary.max) {
-      return `${currency} ${salary.min.toLocaleString()} - ${salary.max.toLocaleString()}`;
+      return `${symbol} ${salary.min.toLocaleString('en-IN')} - ${salary.max.toLocaleString('en-IN')}`;
     }
     if (salary.min) {
-      return `${currency} ${salary.min.toLocaleString()}+`;
+      return `${symbol} ${salary.min.toLocaleString('en-IN')}+`;
     }
-    return `Up to ${currency} ${salary.max.toLocaleString()}`;
+    return `Up to ${symbol} ${salary.max.toLocaleString('en-IN')}`;
   };
 
   return (
@@ -163,80 +177,23 @@ const Jobs = () => {
       <div className="jobs-container">
         <div className="jobs-header">
           <div className="jobs-header-content">
-            <h1>Find Your Dream Job</h1>
-            <p>Discover opportunities that match your skills and aspirations</p>
+            <h1>Find Your Dream Job in India</h1>
+            <p>Discover opportunities that match your skills and aspirations across India</p>
           </div>
           {user?.role === "admin" && (
             <button
               className="btn btn-create-job"
               onClick={() => navigate("/create-job")}
             >
-              + Create New Job
+              <Plus size={16} style={{marginRight: '8px'}} /> Create New Job
             </button>
           )}
         </div>
 
-        {/* Search and Filters */}
-        <div className="jobs-filters">
-          <div className="search-bar">
-            <input
-              type="text"
-              placeholder="Search jobs by title, company, or keywords..."
-              value={filters.search}
-              onChange={(e) =>
-                setFilters((prev) => ({ ...prev, search: e.target.value }))
-              }
-              onKeyPress={(e) => e.key === "Enter" && handleSearch()}
-              className="search-input"
-            />
-            <button
-              onClick={handleSearch}
-              className="search-button"
-              type="button"
-            >
-              <Search size={16} />
-              Search
-            </button>
-          </div>
-
-          <div className="filters-row">
-            <select
-              value={filters.jobType}
-              onChange={(e) => handleFilterChange("jobType", e.target.value)}
-              className="filter-select"
-            >
-              <option value="">All Job Types</option>
-              <option value="full-time">Full Time</option>
-              <option value="part-time">Part Time</option>
-              <option value="contract">Contract</option>
-              <option value="freelance">Freelance</option>
-              <option value="internship">Internship</option>
-            </select>
-
-            <select
-              value={filters.workMode}
-              onChange={(e) => handleFilterChange("workMode", e.target.value)}
-              className="filter-select"
-            >
-              <option value="">All Work Modes</option>
-              <option value="remote">Remote</option>
-              <option value="on-site">On-site</option>
-              <option value="hybrid">Hybrid</option>
-            </select>
-
-            <input
-              type="text"
-              placeholder="Location"
-              value={filters.location}
-              onChange={(e) => handleFilterChange("location", e.target.value)}
-              className="filter-input"
-            />
-          </div>
-        </div>
-
-        {/* Jobs List */}
-        <div className="jobs-content">
-          <div className="jobs-content-area">
+        {/* Main Content Area with Left-Right Layout */}
+        <div className="jobs-main-content">
+          {/* Left Side: Jobs List */}
+          <div className="jobs-list-section">
             {error && <div className="error-message">{error}</div>}
 
             {isLoading ? (
@@ -248,6 +205,34 @@ const Jobs = () => {
               </div>
             ) : (
               <>
+                <div className="jobs-results-header">
+                  <div className="results-count">
+                    {pagination.total > 0 ? (
+                      <span>
+                        Showing {((pagination.current || 1) - 1) * (filters.limit || 10) + 1}-
+                        {Math.min((pagination.current || 1) * (filters.limit || 10), pagination.total || 0)} 
+                        of {pagination.total} jobs
+                      </span>
+                    ) : (
+                      <span>No jobs found</span>
+                    )}
+                  </div>
+                  <div className="results-per-page">
+                    <label htmlFor="limit">Jobs per page:</label>
+                    <select
+                      id="limit"
+                      value={filters.limit}
+                      onChange={(e) => handleLimitChange(e.target.value)}
+                      className="limit-select"
+                    >
+                      <option value="5">5</option>
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                    </select>
+                  </div>
+                </div>
+
                 <div className="jobs-list">
                   {jobs.map((job) => (
                     <div
@@ -348,8 +333,8 @@ const Jobs = () => {
                             {formatSalary(job.salary)}
                           </div>
                           <div className="job-stats">
-                            <span>👁 {job.views} views</span>
-                            <span>📝 {job.applications} applications</span>
+                            <span><Eye size={16} style={{display: 'inline', marginRight: '4px'}} /> {job.views} views</span>
+                            <span><FileText size={16} style={{display: 'inline', marginRight: '4px'}} /> {job.applications} applications</span>
                           </div>
                           <div className="posted-date">
                             Posted{" "}
@@ -382,35 +367,35 @@ const Jobs = () => {
                         </select>
                       </div>
 
-                      {pagination.pages > 1 && (
+                      {(pagination.pages || 0) > 1 && (
                         <div className="pagination-navigation">
                           <button
                             className="pagination-btn"
                             onClick={() =>
-                              handlePageChange(pagination.current - 1)
+                              handlePageChange((pagination.current || 1) - 1)
                             }
-                            disabled={pagination.current === 1}
+                            disabled={(pagination.current || 1) === 1}
                           >
-                            ← Previous
+                            <ChevronLeft size={16} style={{marginRight: '4px'}} /> Previous
                           </button>
 
                           <div className="pagination-pages">
                             {Array.from(
-                              { length: pagination.pages },
+                              { length: pagination.pages || 1 },
                               (_, i) => {
                                 const page = i + 1;
                                 const isCurrentPage =
-                                  page === pagination.current;
+                                  page === (pagination.current || 1);
                                 const shouldShow =
                                   page === 1 ||
-                                  page === pagination.pages ||
-                                  (page >= pagination.current - 1 &&
-                                    page <= pagination.current + 1);
+                                  page === (pagination.pages || 1) ||
+                                  (page >= (pagination.current || 1) - 1 &&
+                                    page <= (pagination.current || 1) + 1);
 
                                 if (
                                   !shouldShow &&
                                   page === 2 &&
-                                  pagination.current > 4
+                                  (pagination.current || 1) > 4
                                 ) {
                                   return (
                                     <span
@@ -423,8 +408,8 @@ const Jobs = () => {
                                 }
                                 if (
                                   !shouldShow &&
-                                  page === pagination.pages - 1 &&
-                                  pagination.current < pagination.pages - 3
+                                  page === (pagination.pages || 1) - 1 &&
+                                  (pagination.current || 1) < (pagination.pages || 1) - 3
                                 ) {
                                   return (
                                     <span
@@ -457,22 +442,22 @@ const Jobs = () => {
                           <button
                             className="pagination-btn"
                             onClick={() =>
-                              handlePageChange(pagination.current + 1)
+                              handlePageChange((pagination.current || 1) + 1)
                             }
-                            disabled={pagination.current === pagination.pages}
+                            disabled={(pagination.current || 1) === (pagination.pages || 1)}
                           >
-                            Next →
+                            Next <ChevronRight size={16} style={{marginLeft: '4px'}} />
                           </button>
                         </div>
                       )}
                     </div>
 
-                    {pagination.total > 0 && (
+                    {(pagination.total || 0) > 0 && (
                       <div className="pagination-info">
-                        Showing {(pagination.current - 1) * filters.limit + 1}-
+                        Showing {((pagination.current || 1) - 1) * (filters.limit || 10) + 1}-
                         {Math.min(
-                          pagination.current * filters.limit,
-                          pagination.total
+                          (pagination.current || 1) * (filters.limit || 10),
+                          pagination.total || 0
                         )}{" "}
                         of {pagination.total} jobs
                       </div>
@@ -481,6 +466,106 @@ const Jobs = () => {
                 )}
               </>
             )}
+          </div>
+
+          {/* Right Side: Filters Sidebar */}
+          <div className="jobs-filters-sidebar">
+            <div className="filters-container">
+              <h3 className="filters-title">
+                <Filter size={18} style={{marginRight: '8px'}} />
+                Filter Jobs
+              </h3>
+              
+              {/* Search Bar */}
+              <div className="filter-group">
+                <label className="filter-label">Search</label>
+                <div className="search-bar">
+                  <input
+                    type="text"
+                    placeholder="Job title, company, keywords..."
+                    value={filters.search}
+                    onChange={(e) =>
+                      setFilters((prev) => ({ ...prev, search: e.target.value }))
+                    }
+                    onKeyPress={(e) => e.key === "Enter" && handleSearch()}
+                    className="search-input"
+                  />
+                  <button
+                    onClick={handleSearch}
+                    className="search-button"
+                    type="button"
+                  >
+                    <Search size={16} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Job Type Filter */}
+              <div className="filter-group">
+                <label className="filter-label">Job Type</label>
+                <select
+                  value={filters.jobType}
+                  onChange={(e) => handleFilterChange("jobType", e.target.value)}
+                  className="filter-select"
+                >
+                  <option value="">All Job Types</option>
+                  <option value="full-time">Full Time</option>
+                  <option value="part-time">Part Time</option>
+                  <option value="contract">Contract</option>
+                  <option value="freelance">Freelance</option>
+                  <option value="internship">Internship</option>
+                </select>
+              </div>
+
+              {/* Work Mode Filter */}
+              <div className="filter-group">
+                <label className="filter-label">Work Mode</label>
+                <select
+                  value={filters.workMode}
+                  onChange={(e) => handleFilterChange("workMode", e.target.value)}
+                  className="filter-select"
+                >
+                  <option value="">All Work Modes</option>
+                  <option value="remote">Remote</option>
+                  <option value="on-site">On-site</option>
+                  <option value="hybrid">Hybrid</option>
+                </select>
+              </div>
+
+              {/* Location Filter */}
+              <div className="filter-group">
+                <label className="filter-label">Location</label>
+                <input
+                  type="text"
+                  placeholder="Mumbai, Bangalore, Delhi..."
+                  value={filters.location}
+                  onChange={(e) => handleFilterChange("location", e.target.value)}
+                  className="filter-input"
+                />
+              </div>
+
+              {/* Clear Filters Button */}
+              <div className="filter-actions">
+                <button
+                  onClick={() => {
+                    const clearedFilters = {
+                      search: "",
+                      jobType: "",
+                      workMode: "",
+                      location: "",
+                      page: 1,
+                      limit: filters.limit,
+                    };
+                    setFilters(clearedFilters);
+                    loadJobs(clearedFilters);
+                  }}
+                  className="btn-clear-filters"
+                >
+                  <RotateCcw size={16} style={{marginRight: '6px'}} />
+                  Clear All Filters
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

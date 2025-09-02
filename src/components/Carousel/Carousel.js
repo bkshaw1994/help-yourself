@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import "./Carousel.css";
 
 const Carousel = ({
@@ -42,6 +43,16 @@ const Carousel = ({
     return () => window.removeEventListener("resize", updateSlidesToShow);
   }, [slidesToShow, responsive]);
 
+  // Ensure currentSlide is within bounds when slidesToShowCurrent changes
+  useEffect(() => {
+    if (totalSlides > 0 && !infinite) {
+      const maxSlide = Math.max(0, totalSlides - slidesToShowCurrent);
+      if (currentSlide > maxSlide) {
+        setCurrentSlide(maxSlide);
+      }
+    }
+  }, [slidesToShowCurrent, totalSlides, infinite, currentSlide]);
+
   // Auto play functionality
   useEffect(() => {
     if (!autoPlay) return;
@@ -81,9 +92,12 @@ const Carousel = ({
 
   const prevSlide = () => {
     if (infinite) {
-      setCurrentSlide((prev) =>
-        prev === 0 ? totalSlides - slidesToScroll : prev - slidesToScroll
-      );
+      setCurrentSlide((prev) => {
+        if (prev === 0) {
+          return totalSlides - slidesToShowCurrent;
+        }
+        return Math.max(prev - slidesToScroll, 0);
+      });
     } else {
       setCurrentSlide((prev) => Math.max(prev - slidesToScroll, 0));
     }
@@ -95,11 +109,15 @@ const Carousel = ({
 
   // Touch handlers for mobile swipe
   const handleTouchStart = (e) => {
-    touchStartX.current = e.touches[0].clientX;
+    if (e.touches && e.touches.length > 0) {
+      touchStartX.current = e.touches[0].clientX;
+    }
   };
 
   const handleTouchMove = (e) => {
-    touchEndX.current = e.touches[0].clientX;
+    if (e.touches && e.touches.length > 0) {
+      touchEndX.current = e.touches[0].clientX;
+    }
   };
 
   const handleTouchEnd = () => {
@@ -114,6 +132,10 @@ const Carousel = ({
     } else if (isRightSwipe) {
       prevSlide();
     }
+
+    // Reset touch positions
+    touchStartX.current = 0;
+    touchEndX.current = 0;
   };
 
   // Keyboard navigation
@@ -153,6 +175,11 @@ const Carousel = ({
 
   const translateX = -(currentSlide * (100 / slidesToShowCurrent));
 
+  // Safety check for empty slides
+  if (totalSlides === 0) {
+    return <div className={`carousel ${className}`}>No content available</div>;
+  }
+
   return (
     <div
       className={`carousel ${className}`}
@@ -169,7 +196,7 @@ const Carousel = ({
             disabled={!infinite && currentSlide === 0}
             aria-label="Previous slide"
           >
-            &#8249;
+            <ChevronLeft size={24} />
           </button>
         )}
 
@@ -207,7 +234,7 @@ const Carousel = ({
             }
             aria-label="Next slide"
           >
-            &#8250;
+            <ChevronRight size={24} />
           </button>
         )}
       </div>

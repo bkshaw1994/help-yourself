@@ -1,7 +1,7 @@
 {
-  "name": "my-app-backend",
+  "name": "help-yourself-backend",
   "version": "1.0.0",
-  "description": "Backend server for My App with MongoDB authentication",
+  "description": "Backend server for Help Yourself - India's Premier Job Portal with MongoDB authentication",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

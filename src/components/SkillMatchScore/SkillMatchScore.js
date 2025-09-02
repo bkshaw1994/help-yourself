@@ -5,6 +5,7 @@ import {
   AlertCircle,
   BookOpen,
   TrendingUp,
+  Zap,
 } from "lucide-react";
 import SkillMatchingService from "../../services/skillMatching";
 import "./SkillMatchScore.css";
@@ -27,6 +28,24 @@ const SkillMatchScore = ({
     matchResult.missingSkills
   );
 
+  // Function to render Lucide icon based on icon name
+  const renderIcon = (iconName, size = 16) => {
+    switch (iconName) {
+      case "check-circle":
+        return <CheckCircle size={size} />;
+      case "zap":
+        return <Zap size={size} />;
+      case "trending-up":
+        return <TrendingUp size={size} />;
+      case "book-open":
+        return <BookOpen size={size} />;
+      case "target":
+        return <Target size={size} />;
+      default:
+        return <Target size={size} />;
+    }
+  };
+
   return (
     <div className="skill-match-score">
       <div className="skill-match-header">
@@ -43,7 +62,7 @@ const SkillMatchScore = ({
               {matchResult.percentage}%
             </span>
             <span className="match-level" style={{ color: matchLevel.color }}>
-              {matchLevel.icon} {matchLevel.level}
+              {renderIcon(matchLevel.icon, 16)} {matchLevel.level}
             </span>
           </div>
         </div>

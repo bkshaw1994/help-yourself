@@ -1,6 +1,13 @@
-# Help Yourself - Job Portal Platform
+# Help Yourself - India's Premier Job Portal
 
-A comprehensive job portal platform built with React.js frontend and Node.js backend, featuring role-based authentication for Job Seekers and Job Posters with automated CI/CD deployment.
+A comprehensive job portal platform specifically designed for the Indian job market, built with React.js frontend and Node.js backend. Connecting talented professionals with leading employers across India with role-based authentication for Job Seekers and Job Posters.
+
+## 🇮🇳 **Made for India**
+
+- **Currency**: Indian Rupees (₹) as default currency
+- **Locations**: Major Indian cities (Mumbai, Bangalore, Delhi, Hyderabad, etc.)
+- **Market Focus**: Indian job market and employment practices
+- **Localization**: Indian number formatting and date formats
 
 ## 🚀 Quick Start
 
@@ -10,8 +17,6 @@ A comprehensive job portal platform built with React.js frontend and Node.js bac
 - **npm** package manager
 - **MongoDB** database (Local or Atlas) - [Setup Guide](https://docs.mongodb.com/manual/installation/)
 - **Git** - [Download here](https://git-scm.com/)
-- **Docker** (for deployment) - [Download here](https://docker.com/)
-- **Azure CLI** (for cloud deployment) - [Install Guide](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
 
 ## 📋 Local Development Setup
 
@@ -19,7 +24,7 @@ A comprehensive job portal platform built with React.js frontend and Node.js bac
 
 ```bash
 git clone <repository-url>
-cd help-yourself-admin/my-app
+cd help-yourself-admin/help-yourself
 ```
 
 ### Step 2: Install Dependencies
@@ -604,7 +609,7 @@ git push origin main       # Deploy to production
 - **Redux Toolkit** - State management
 - **Lucide React** - Icons
 - **React Toastify** - Notifications
-- **Tailwind CSS** - Styling
+- **Lucide React** - Modern icons
 
 ### Backend
 

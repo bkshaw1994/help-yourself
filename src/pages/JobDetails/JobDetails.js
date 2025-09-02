@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
-import { MapPin, Briefcase, Home, User, AlertTriangle } from "lucide-react";
+import { MapPin, Briefcase, Home, User, AlertTriangle, ChevronLeft, Send } from "lucide-react";
 import apiService from "../../services/api";
 import { SectionLoader } from "../../components/Loader";
 import Carousel from "../../components/Carousel";
@@ -111,7 +111,7 @@ const JobDetails = () => {
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
+    return new Date(dateString).toLocaleDateString("en-IN", {
       year: "numeric",
       month: "long",
       day: "numeric",
@@ -122,17 +122,18 @@ const JobDetails = () => {
     if (!salary || (!salary.min && !salary.max)) return "Not specified";
 
     const formatAmount = (amount) => {
-      return new Intl.NumberFormat("en-US").format(amount);
+      return new Intl.NumberFormat("en-IN").format(amount);
     };
 
+    const currency = salary.currency || "INR";
+    const symbol = currency === "INR" ? "₹" : currency === "USD" ? "$" : currency;
+
     if (salary.min && salary.max) {
-      return `${salary.currency || "USD"} ${formatAmount(
-        salary.min
-      )} - ${formatAmount(salary.max)}`;
+      return `${symbol} ${formatAmount(salary.min)} - ${formatAmount(salary.max)}`;
     } else if (salary.min) {
-      return `${salary.currency || "USD"} ${formatAmount(salary.min)}+`;
+      return `${symbol} ${formatAmount(salary.min)}+`;
     } else if (salary.max) {
-      return `Up to ${salary.currency || "USD"} ${formatAmount(salary.max)}`;
+      return `Up to ${symbol} ${formatAmount(salary.max)}`;
     }
   };
 
@@ -151,7 +152,7 @@ const JobDetails = () => {
           <h2>Error Loading Job</h2>
           <p>{error || "Job not found"}</p>
           <button onClick={() => navigate("/jobs")} className="back-btn">
-            ← Back to Jobs
+            <ChevronLeft size={16} style={{marginRight: '8px'}} /> Back to Jobs
           </button>
         </div>
       </div>
@@ -162,7 +163,7 @@ const JobDetails = () => {
     <div className="job-details-container">
       <div className="job-details-header">
         <button onClick={() => navigate("/jobs")} className="back-btn">
-          ← Back to Jobs
+          <ChevronLeft size={16} style={{marginRight: '8px'}} /> Back to Jobs
         </button>
 
         <div className="job-title-section">
@@ -395,6 +396,7 @@ const JobDetails = () => {
 
           <div className="apply-section">
             <button onClick={handleApplyJob} className="apply-btn">
+              <Send size={16} style={{marginRight: '6px'}} />
               Apply for this Job
             </button>
             <p className="apply-note">
